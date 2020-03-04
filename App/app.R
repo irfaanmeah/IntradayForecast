@@ -8,7 +8,7 @@ library(dplyr)
 library(dummies)
 library(shinyalert)
 library(waiter)
-#Begin
+
 ####--------------------------------------------Forecast Setup-------------------------------##
 path="C:/Users/md.irfaan.meah/OneDrive - Accenture/Interval_forecast/Intraday_app/Intraday_app_shared/App/"
 
