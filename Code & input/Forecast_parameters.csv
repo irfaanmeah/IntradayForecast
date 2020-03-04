@@ -1,0 +1,2 @@
+Run,Team,Queue,Start_hour,End_hour,interval,holiday_per_alter,outlier_correction_req,outlier_method,Upper_perc,Lower_perc,no_of_test_days,no_of_horizon_days,Include_Weekends
+Yes,ACT,ACT,8,20,15,0.2,FALSE,IQR,,,0,1,FALSE
