@@ -3,15 +3,15 @@ library(lubridate)
 library(dplyr)
 library(dummies)
 
-source("interval_functions.R")
 ##--------------------------------------------Reading input files
+path=getwd()
 
-input <- read.csv("incoming_volumes.csv",stringsAsFactors = F)
+input <- read.csv(paste0(path,"/Input/incoming_volumes.csv"),stringsAsFactors = F)
 
-holiday_list <- read.csv("Holiday_list.csv",stringsAsFactors = F)
+holiday_list <- read.csv(paste0(path,"/Input/Holiday_list.csv"),stringsAsFactors = F)
 holiday_list$date <- as.POSIXct(holiday_list$date,format="%m/%d/%Y")
 
-forecast_param <- read.csv("Forecast_parameters.csv",stringsAsFactors = F)
+forecast_param <- read.csv(paste0(path,"/Input/Forecast_parameters.csv"),stringsAsFactors = F)
 forecast_param <- forecast_param[forecast_param$Run=="Yes",]
 ##---------------------------------------------Parameters---------------##
 i=1
@@ -25,14 +25,17 @@ Upper_perc=forecast_param$Upper_perc[i]
 Lower_perc=forecast_param$Lower_perc[i]
 hol_per_alter=forecast_param$holiday_per_alter[i]
 treat_data=forecast_param$outlier_correction_req[i]
-
+ot_hrs=forecast_param$ot_hrs[i]
+aht=forecast_param$aht[i]
+fte=forecast_param$fte[i]
+  
 days <- ifelse(include_weekends==FALSE,5,7)
 test_points=forecast_param$no_of_test_days[i]*freq
 horizon_points=forecast_param$no_of_horizon_days[i]*freq
 
 train_points <- freq*days*4
 ##-------------------------------------------Data Transformation----
-input <- input[,c("Received.Date","Received.Time","Volume")]
+input <- input[,c("Received.Date","Received.Time","Volume","backlog")]
 input$Received.Time <- as.POSIXct(input$Received.Time,format="%I:%M %p")
 input$Received.Date <- as.POSIXct(input$Received.Date,format="%m/%d/%Y")
 
@@ -44,7 +47,7 @@ input <- input[input$hour>=start&input$hour<end,]
 input$Received.Time <- as.POSIXct(paste0(input$Received.Date," ",input$hour,":",input$min))
 
 #Temp filter
-input <- input[input$Received.Time<"2018-01-31 08:15:00",]
+#input <- input[input$Received.Time<"2018-01-31 19:15:00",]
 ##
 
 
@@ -75,6 +78,23 @@ input%>%
   arrange(Received.Time)->input
 
 input$forecast <- NA
+
+input$interval <- as.character(input$interval)
+
+#Changing format of intervals for better visual
+input$interval <- sapply(input$interval,FUN = function(x){
+  
+  ifelse(nchar(substr(x,gregexpr(":",x)[[1]][1]+1,
+                      nchar(x)))<2,paste0(x,"0"),x)
+  
+})
+
+input$interval <- sapply(input$interval,FUN = function(x){
+  
+  ifelse(nchar(substr(x,1,gregexpr(":",x)[[1]][1]-1))<2,
+         paste0("0",x),x)
+  
+})
 
 ##-------------------------------------------Defining Train and test sets--------------------##
 if(test_points>0){
@@ -159,6 +179,24 @@ if(horizon_points>0){
     horizon_df$interval <- paste0(horizon_df$hour,":",horizon_df$min)
     horizon_df$Weekday <- weekdays(horizon_df$Received.Time)
     
+    horizon_df$interval <- as.character(horizon_df$interval)
+    
+    #Changing format of intervals for better visual
+    
+    horizon_df$interval <- sapply(horizon_df$interval,FUN = function(x){
+      
+      ifelse(nchar(substr(x,gregexpr(":",x)[[1]][1]+1,
+                          nchar(x)))<2,paste0(x,"0"),x)
+      
+    })
+    
+    horizon_df$interval <- sapply(horizon_df$interval,FUN = function(x){
+      
+      ifelse(nchar(substr(x,1,gregexpr(":",x)[[1]][1]-1))<2,
+             paste0("0",x),x)
+      
+    })
+    
     #Removing weekends if parameter is FALSE
     if(include_weekends==FALSE){
       horizon_df <- horizon_df[!horizon_df$Weekday%in%c("Sunday","Saturday"),]
@@ -203,18 +241,20 @@ if(horizon_points>0){
       horizon_df_base <- horizon_df
       horizon_df_base$base_forecast <- horizon_df_base$forecast
       horizon_df_base$forecast <- NULL
-      saveRDS(horizon_df_base,file="horizon_base.rds")
+      saveRDS(horizon_df_base,file=paste0(path,"/Input/horizon_base.rds"))
       
     }else{
-      horizon_df_base <- readRDS(file = "horizon_base.rds")
+      horizon_df_base <- readRDS(file = paste0(path,"/Input/horizon_base.rds"))
       horizon_df_base <- left_join(horizon_df_base,horizon_df[,c("Received.Time","forecast")],
                                    by=c("Received.Time"))
     }
     
     
   final_df <- horizon_df_base
-  final_df <- left_join(final_df,input[,c("Received.Time","Actual")],
+  final_df <- left_join(final_df,input[,c("Received.Time","Actual","backlog")],
                         by="Received.Time")  
+  
+  saveRDS(final_df,file=paste0(path,"/Input/final_df.rds"))
   
   #Print statements
   
@@ -225,5 +265,8 @@ if(horizon_points>0){
   print(actuals_today)
   print(base_forecast_today)
   print(expec_eod_vol)
+  
+  input_df <- input
+  rm(input)
   
 }
