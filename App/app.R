@@ -182,10 +182,24 @@ shinyApp(
       
       setnames(df,c("Received.Date","interval","Actual","backlog"),c("Received Date","Interval","Actual Incoming Volume","Actual Backlog"))
       
-      datatable(df,options = list(paging = FALSE,dom='t',scroller = TRUE,
+      
+      row_selc <- length(df$`Actual Incoming Volume`[!is.na(df$`Actual Incoming Volume`)])
+      row_selc  <- floor(row_selc/9)#9 rows visible
+      
+      row_selc <- row_selc*9
+      
+      #(this.api().table().row(",row_selc,").node()).addClass('selected');
+      datatable(df, 
+                options = list(paging = FALSE,dom='t',scroller = TRUE,
                                   deferRender = TRUE,
-                                  scrollY = 330,columnDefs=list(list(targets=1:ncol(df),class="dt-center",className= 'dt-body-center'))),
-                fillContainer = T,filter="none",class = 'cell-border stripe')
+                                  scrollY = 330,columnDefs=list(list(targets=1:ncol(df),class="dt-center",className= 'dt-body-center')),
+                                  initComplete  = JS(paste0("function() {
+                                   $
+                                   this.api().table().row(",row_selc,").node().scrollIntoView();
+                                                     }"))),
+                                 
+                fillContainer = T,filter="none",class = 'cell-border stripe'
+      )
       
     })
     

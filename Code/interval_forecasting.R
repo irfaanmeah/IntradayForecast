@@ -6,6 +6,11 @@ library(dummies)
 ##--------------------------------------------Reading input files
 path=getwd()
 
+if (file.exists(paste0(path,"/Input/horizon_base.rds")))
+  file.remove(paste0(path,"/Input/horizon_base.rds"))
+
+
+
 input <- read.csv(paste0(path,"/Input/incoming_volumes.csv"),stringsAsFactors = F)
 
 holiday_list <- read.csv(paste0(path,"/Input/Holiday_list.csv"),stringsAsFactors = F)
@@ -254,7 +259,7 @@ if(horizon_points>0){
   final_df <- left_join(final_df,input[,c("Received.Time","Actual","backlog")],
                         by="Received.Time")  
   
-  saveRDS(final_df,file=paste0(path,"/Input/final_df.rds"))
+  #saveRDS(final_df,file=paste0(path,"/Input/final_df.rds"))
   
   #Print statements
   
