@@ -5,17 +5,17 @@ Added to this app is the ability to Simulate backlogs based on the No of associa
 
 Link - https://irfaanmeah11.shinyapps.io/App2/?_ga=2.263373004.1383046900.1609545645-2059591034.1609545645
 
-## *Input*
+## Input
 
 * Incoming volumes at an interval level (15 mins)
 * Holiday List to manipulate forecast (Increase or Decrease based on past performance)
 * Forecast Parameters (Excel file to specify parameters that configure the model)
 
-## *Model*
+## Model
 
 As and when new data is ingested, a multi-seasonal time series data is passed to an ARIMA model with fourier series as regressors.
 
-## *Output*
+## Output
 
 ### Plot
 * The plot displays the interval at the X-axis and Volumes on the Y-axis
