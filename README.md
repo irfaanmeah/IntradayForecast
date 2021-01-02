@@ -14,14 +14,15 @@ Model
 As and when new data is ingested, a multi-seasonal time series data is passed to an ARIMA model with fourier series as regressors.
 
 Output
-    Plot
-    * The plot displays the interval at the X axis and Volumes on the Y axis
-    * The forecast to the start of day is shown
-    * Current forecast is the forecast for the rest of the Day
-    * Actuals is when new actual data is input to the tool
-    
-    Table
-    * Shows the Date, Interval, Actual incoming volume and Actual Backlog 
-    
-    SidePanel on the right
-    * Shows the summary of Incoming volumes, Actuals and Backlog
+
+Plot
+* The plot displays the interval at the X axis and Volumes on the Y axis
+* The forecast to the start of day is shown
+* Current forecast is the forecast for the rest of the Day
+* Actuals is when new actual data is input to the tool
+
+Table
+* Shows the Date, Interval, Actual incoming volume and Actual Backlog 
+
+SidePanel on the right
+* Shows the summary of Incoming volumes, Actuals and Backlog
