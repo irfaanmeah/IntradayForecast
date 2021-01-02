@@ -1,7 +1,7 @@
 # IntradayForecast
 
 This is a Demo App showing an intraday forecast at a 15 mins time interval. It also considers backlog to determine expected End of Day (EOD) volumes and EOD Backlog. 
-Added to this app is the ability to Simulate backlogs based on the No of associates, AHT (Average Handling time) in mins and Overtime hours.
+Added to this app is the ability to Simulate backlogs based on the No. of associates, AHT (Average Handling time) in mins and Overtime hours.
 
 Link - https://irfaanmeah11.shinyapps.io/App2/?_ga=2.263373004.1383046900.1609545645-2059591034.1609545645
 
