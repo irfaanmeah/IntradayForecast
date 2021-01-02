@@ -9,8 +9,6 @@ path=getwd()
 if (file.exists(paste0(path,"/Input/horizon_base.rds")))
   file.remove(paste0(path,"/Input/horizon_base.rds"))
 
-
-
 input <- read.csv(paste0(path,"/Input/incoming_volumes.csv"),stringsAsFactors = F)
 
 holiday_list <- read.csv(paste0(path,"/Input/Holiday_list.csv"),stringsAsFactors = F)
@@ -178,7 +176,8 @@ if(horizon_points>0){
     
     horizon_df <- data.frame("Received.Time"=seq.POSIXt(from=train$Received.Time[nrow(train)],by=interval*60,length.out=1000))
     
-    horizon_df$Received.Date <- as.POSIXct(date(horizon_df$Received.Time))
+    #horizon_df$Received.Date <- as.POSIXct(date(horizon_df$Received.Time))
+    horizon_df$Received.Date <- as.POSIXct(substr(horizon_df$Received.Time,1,10))
     horizon_df$hour <- hour(horizon_df$Received.Time)
     horizon_df$min <- minute(horizon_df$Received.Time)
     horizon_df$interval <- paste0(horizon_df$hour,":",horizon_df$min)
@@ -275,3 +274,4 @@ if(horizon_points>0){
   rm(input)
   
 }
+
